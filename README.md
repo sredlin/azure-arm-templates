@@ -1,2 +1,1 @@
-# azure-arm-templates
-Zum Testen von ARM Templates
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)

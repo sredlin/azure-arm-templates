@@ -4,7 +4,8 @@
   "parameters": {
     "adminUsername": { "type": "string" },
     "adminPassword": { "type": "securestring" },
-	"DNSName": { "type": "string" }
+  "DNSName": { "type": "string" },
+  "frontEndNSGName" : { "type": "string" }
   },
 
   "variables": {
@@ -35,7 +36,10 @@
         "subnets": [
           {
             "name": "mySubnet",
-            "properties": { "addressPrefix": "10.0.0.0/24" }
+            "properties": { "addressPrefix": "10.0.0.0/24" },
+            "networkSecurityGroup": {
+              "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('frontEndNSGName'))]"
+              }
           }
         ]
       }
@@ -98,6 +102,44 @@
           ]
         }
       }
+    },
+    {
+
+      "apiVersion": "2017-03-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[parameters('frontEndNSGName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "NSG - Front End"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "rdp-rule",
+            "properties": {
+              "description": "Allow RDP",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          }
+         
+        ]
+      }
+
+
+
+
+
+
+
+
     }
+     
   ]
 }

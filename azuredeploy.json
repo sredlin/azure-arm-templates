@@ -4,13 +4,13 @@
   "parameters": {
     "adminUsername": { "type": "string" },
     "adminPassword": { "type": "securestring" },
-	"DNSName": { "type": "string" },
+	"DNSName": { "type": "string" }
   },
-  
+
   "variables": {
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks','myVNet')]",
 	
-    "subnetRef": "[concat(variables('vnetID'),'/subnets/mySubnet')]", 
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/mySubnet')]"
   },
   "resources": [
     {
@@ -21,7 +21,7 @@
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
-          "domainNameLabel": "[parameters('DNSName')]",
+          "domainNameLabel": "[parameters('DNSName')]"
         }
       }
     },

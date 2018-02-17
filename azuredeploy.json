@@ -109,6 +109,9 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[parameters('frontEndNSGName')]",
       "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/', 'myVNet')]"
+      ],
       "tags": {
         "displayName": "NSG - Front End"
       },

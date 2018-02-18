@@ -91,7 +91,10 @@
           "osDisk": {
             "name": "myManagedOSDisk",
             "caching": "ReadWrite",
-            "createOption": "FromImage"
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "Standard_LRS"
+          }
           }
         },
         "networkProfile": {
@@ -109,10 +112,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[parameters('frontEndNSGName')]",
       "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks/', 'myVNet')]"
-      ],
-      "tags": {
+            "tags": {
         "displayName": "NSG - Front End"
       },
       "properties": {

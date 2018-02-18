@@ -72,7 +72,8 @@
       "name": "myVM",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkInterfaces/', 'myNic')]"
+        "[resourceId('Microsoft.Network/networkInterfaces/', 'myNic')]",
+        "Microsoft.Compute/disks/dataDisk1"
       ],
       "properties": {
         "hardwareProfile": { "vmSize": "Standard_DS2_v2" },

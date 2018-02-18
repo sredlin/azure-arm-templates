@@ -142,14 +142,21 @@
         ]
       }
 
+    },
 
-
-
-
-
-
-
-    }
+    {
+      "type": "Microsoft.Compute/disks",
+      "name": "dataDisk1",
+      "apiVersion": "2016-04-30-preview",
+      "location": "[resourceGroup().location]",
+      "properties": {
+          "creationData": {
+              "createOption": "Empty"
+          },
+          "accountType": "Premium_LRS",
+          "diskSizeGB": 128
+      }
+  }
      
   ]
 }

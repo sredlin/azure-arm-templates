@@ -1,162 +1,231 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "adminUsername": { "type": "string" },
-    "adminPassword": { "type": "securestring" },
-  "DNSName": { "type": "string" },
-  "frontEndNSGName" : { "type": "string" }
-  },
-
-  "variables": {
-    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks','myVNet')]",
-	
-    "subnetRef": "[concat(variables('vnetID'),'/subnets/mySubnet')]"
-  },
-  "resources": [
-    {
-      "apiVersion": "2016-03-30",
-      "type": "Microsoft.Network/publicIPAddresses",
-      "name": "myPublicIPAddress",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "publicIPAllocationMethod": "Dynamic",
-        "dnsSettings": {
-          "domainNameLabel": "[parameters('DNSName')]"
-        }
-      }
-    },
-    {
-      "apiVersion": "2016-03-30",
-      "type": "Microsoft.Network/virtualNetworks",
-      "name": "myVNet",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ] },
-        "subnets": [
-          {
-            "name": "mySubnet",
-            "properties": { "addressPrefix": "10.0.0.0/24" },
-            "networkSecurityGroup": {
-              "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('frontEndNSGName'))]"
-              }
-          }
-        ]
-      }
-    },
-    {
-      "apiVersion": "2016-03-30",
-      "type": "Microsoft.Network/networkInterfaces",
-      "name": "myNic",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/publicIPAddresses/', 'myPublicIPAddress')]",
-        "[resourceId('Microsoft.Network/virtualNetworks/', 'myVNet')]"
-      ],
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses','myPublicIPAddress')]" },
-              "subnet": { "id": "[variables('subnetRef')]" }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "apiVersion": "2016-04-30-preview",
-      "type": "Microsoft.Compute/virtualMachines",
-      "name": "myVM",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkInterfaces/', 'myNic')]",
-        "Microsoft.Compute/disks/dataDisk1"
-      ],
-      "properties": {
-        "hardwareProfile": { "vmSize": "Standard_DS2_v2" },
-        "osProfile": {
-          "computerName": "myVM",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "westeurope"
         },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "2016-Datacenter",
-            "version": "latest"
-          },
-          "osDisk": {
-            "name": "myManagedOSDisk",
-            "caching": "ReadWrite",
-            "createOption": "FromImage"
-          },
-          "dataDisks": [{
-            "lun": 0,
-            "managedDisk": {
-                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk1')]"
+        "virtualMachineName": {
+            "value": "DC-01"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_A3"
+        },
+        "sizeOfEachDataDiskInGB": {
+          "value": "4"
+        },
+        "adminUsername": {
+            "value": "adminvsc"
+        },
+        "virtualNetworkName": {
+            "value": "myVNet"
+        },
+        "networkInterfaceName": {
+            "value": "dc-01149"
+        },
+        "networkSecurityGroupName": {
+            "value": "DC-01-nsg"
+        },
+        "adminPassword": {
+            "value": null
+        },
+        "availabilitySetName": {
+            "value": "HA-Config"
+        },
+        "availabilitySetPlatformFaultDomainCount": {
+            "value": "2"
+        },
+        "availabilitySetPlatformUpdateDomainCount": {
+            "value": "5"
+        },
+        "subnetName": {
+            "value": "mySubnet"
+        },
+        "publicIpAddressName": {
+            "value": "DC-01-ip-static"
+        },
+        "publicIpAddressType": {
+            "value": "Static"
+        },
+        "publicIpAddressSku": {
+            "value": "Basic"
+        }
+    },
+    "variables": {
+        "vnetId": "[resourceId('Templates','Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('virtualMachineName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2016-04-30-preview",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'))]",
+                "[concat('Microsoft.Compute/availabilitySets/', parameters('availabilitySetName'))]"
+            ],
+            "properties": {
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachineName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "windowsConfiguration": {
+                        "provisionVmAgent": "true"
+                    }
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"
+                        }
+                    },
+                    "dataDisks": [
+
+                        {
+
+                            "diskSizeGB": "[parameters('sizeOfEachDataDiskInGB')]",
+              
+                            "lun": 0,
+              
+                            "createOption": "Empty"
+              
+                          },
+              
+                          {
+              
+                            "diskSizeGB": "[parameters('sizeOfEachDataDiskInGB')]",
+              
+                            "lun": 1,
+              
+                            "createOption": "Empty"
+              
+                          },
+              
+                          {
+              
+                            "diskSizeGB": "[parameters('sizeOfEachDataDiskInGB')]",
+              
+                            "lun": 2,
+              
+                            "createOption": "Empty"
+              
+                          },
+              
+                          {
+              
+                            "diskSizeGB": "[parameters('sizeOfEachDataDiskInGB')]",
+              
+                            "lun": 3,
+              
+                            "createOption": "Empty"
+              
+                          }
+
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName'))]"
+                        }
+                    ]
+                },
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
+                }
+            }
+        },
+        {
+            "name": "[parameters('availabilitySetName')]",
+            "type": "Microsoft.Compute/availabilitySets",
+            "apiVersion": "2016-04-30-preview",
+            "location": "[parameters('location')]",
+            "properties": {
+                "platformFaultDomainCount": "[parameters('availabilitySetPlatformFaultDomainCount')]",
+                "platformUpdateDomainCount": "[parameters('availabilitySetPlatformUpdateDomainCount')]",
+                "managed": true
+            }
+        },
+        {
+            "name": "[parameters('networkInterfaceName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2016-09-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIpAddress": {
+                                "id": "[resourceId('Templates','Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
+                            }
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Templates', 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+                }
+            }
+        },
+        {
+            "name": "[parameters('publicIpAddressName')]",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "apiVersion": "2017-08-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
             },
-                "caching": "None",
-                "createOption": "Attach"
-        }]
-
+            "sku": {
+                "name": "[parameters('publicIpAddressSku')]"
+            }
         },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces','myNic')]"
-            }
-          ]
-        }
-      }
-    },
-    {
-
-      "apiVersion": "2017-03-01",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[parameters('frontEndNSGName')]",
-      "location": "[resourceGroup().location]",
-            "tags": {
-        "displayName": "NSG - Front End"
-      },
-      "properties": {
-        "securityRules": [
-          {
-            "name": "rdp-rule",
+        {
+            "name": "[parameters('networkSecurityGroupName')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2017-06-01",
+            "location": "[parameters('location')]",
             "properties": {
-              "description": "Allow RDP",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "3389",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "priority": 1000,
+                            "protocol": "TCP",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourceAddressPrefix": "*",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "3389"
+                        }
+                    }
+                ]
             }
-          }
-         
-        ]
-      }
-
-    },
-
-    {
-      "type": "Microsoft.Compute/disks",
-      "name": "dataDisk1",
-      "apiVersion": "2016-04-30-preview",
-      "location": "[resourceGroup().location]",
-      "properties": {
-          "creationData": {
-              "createOption": "Empty"
-          },
-          "accountType": "Premium_LRS",
-          "diskSizeGB": 128
-      }
-  }
-     
-  ]
+        }
+    ],
+    "outputs": {
+        "adminUsername": {
+            "type": "string",
+            "value": "[parameters('adminUsername')]"
+        }
+    }
 }

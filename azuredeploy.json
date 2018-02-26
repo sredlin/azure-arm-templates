@@ -188,21 +188,7 @@
   
             },
   
-            "dataDisks": [{
-  
-              "lun": 0,
-  
-              "managedDisk": {
-  
-                  "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk1')]"
-  
-              },
-  
-                  "caching": "None",
-  
-                  "createOption": "Attach"
-  
-          }]
+            "dataDisks": []
   
   
   

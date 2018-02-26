@@ -10,13 +10,9 @@
   
       "adminPassword": { "type": "securestring" },
   
-    "DNSName": { "type": "string" },
-  
-    "frontEndNSGName" : { "type": "string" }
+      "DNSName": { "type": "string" }
   
     },
-  
-  
   
     "variables": {
   
@@ -24,7 +20,7 @@
   
       
   
-      "subnetRef": "[concat(variables('vnetID'),'/subnets/mySubnet')]"
+      "subnetRef": "[concat(variables('vnetID'),'/subnets/mySubnet')]" 
   
     },
   
@@ -74,13 +70,7 @@
   
               "name": "mySubnet",
   
-              "properties": { "addressPrefix": "10.0.0.0/24" },
-  
-              "networkSecurityGroup": {
-  
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('frontEndNSGName'))]"
-  
-                }
+              "properties": { "addressPrefix": "10.0.0.0/24" }
   
             }
   
@@ -152,7 +142,7 @@
   
         "properties": {
   
-          "hardwareProfile": { "vmSize": "Standard_DS2_v2" },
+          "hardwareProfile": { "vmSize": "Standard_DS1" },
   
           "osProfile": {
   
@@ -172,7 +162,7 @@
   
               "offer": "WindowsServer",
   
-              "sku": "2016-Datacenter",
+              "sku": "2012-R2-Datacenter",
   
               "version": "latest"
   
@@ -187,10 +177,6 @@
               "createOption": "FromImage"
   
             }
-  
-            
-  
-  
   
           },
   
@@ -210,83 +196,7 @@
   
         }
   
-      },
-  
-      {
-  
-  
-  
-        "apiVersion": "2017-03-01",
-  
-        "type": "Microsoft.Network/networkSecurityGroups",
-  
-        "name": "[parameters('frontEndNSGName')]",
-  
-        "location": "[resourceGroup().location]",
-  
-              "tags": {
-  
-          "displayName": "NSG - Front End"
-  
-        },
-  
-        "properties": {
-  
-          "securityRules": [
-  
-            {
-  
-              "name": "rdp-rule",
-  
-              "properties": {
-  
-                "description": "Allow RDP",
-  
-                "protocol": "Tcp",
-  
-                "sourcePortRange": "*",
-  
-                "destinationPortRange": "3389",
-  
-                "sourceAddressPrefix": "Internet",
-  
-                "destinationAddressPrefix": "*",
-  
-                "access": "Allow",
-  
-                "priority": 100,
-  
-                "direction": "Inbound"
-  
-              }
-  
-            }
-  
-           
-  
-          ]
-  
-        }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
       }
-  
-       
   
     ]
   

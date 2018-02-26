@@ -188,7 +188,7 @@
                 {
                     "name": "DC-01-DataDisk-2",  
                     "createOption": "Empty",
-                    "lun": 0,
+                    "lun": 1,
                     "diskSizeGB": 5,
                     "caching": "None"
                   }

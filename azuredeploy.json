@@ -142,7 +142,7 @@
   
         "properties": {
   
-          "hardwareProfile": { "vmSize": "Standard_A3" },
+          "hardwareProfile": { "vmSize": "Standard_D2" },
   
           "osProfile": {
   
@@ -184,7 +184,19 @@
                   "lun": 0,
                   "diskSizeGB": 5,
                   "caching": "None"
-                }
+                },
+                {
+                    "name": "DC-01-DataDisk-2",  
+                    "createOption": "Empty",
+                    "lun": 0,
+                    "diskSizeGB": 5,
+                    "caching": "None"
+                  }
+
+
+
+
+                
               ]
           },
   

@@ -142,7 +142,7 @@
   
         "properties": {
   
-          "hardwareProfile": { "vmSize": "Standard_DS1" },
+          "hardwareProfile": { "vmSize": "Standard_A3" },
   
           "osProfile": {
   
@@ -170,7 +170,7 @@
   
             "osDisk": {
   
-              "name": "myManagedOSDisk",
+              "name": "DC-01-OSDisk",
   
               "caching": "ReadWrite",
   
@@ -179,6 +179,7 @@
             },
             "dataDisks": [
                 {
+                  "name": "DC-01-DataDisk-1",  
                   "createOption": "Empty",
                   "lun": 0,
                   "diskSizeGB": 5,

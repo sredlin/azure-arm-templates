@@ -177,26 +177,26 @@
               "createOption": "FromImage"
   
             },
-            "dataDisks": [
+            "copy": [
+
                 {
-                  "name": "DC-01-DataDisk-1",  
-                  "createOption": "Empty",
-                  "lun": 0,
-                  "diskSizeGB": 5,
-                  "caching": "None"
-                },
-                {
-                    "name": "DC-01-DataDisk-2",  
-                    "createOption": "Empty",
-                    "lun": 1,
-                    "diskSizeGB": 5,
-                    "caching": "None"
+    
+                  "name": "dataDisks",
+    
+                  "count": 2,
+    
+                  "input": {
+    
+                    "diskSizeGB": 10,
+    
+                    "lun": "[copyIndex('dataDisks')]",
+    
+                    "createOption": "Empty"
+    
                   }
-
-
-
-
-                
+    
+                }
+    
               ]
           },
   

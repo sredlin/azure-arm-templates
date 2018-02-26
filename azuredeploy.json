@@ -176,8 +176,15 @@
   
               "createOption": "FromImage"
   
-            }
-  
+            },
+            "dataDisks": [
+                {
+                  "createOption": "Empty",
+                  "lun": 0,
+                  "diskSizeGB": 5,
+                  "caching": "None"
+                }
+              ]
           },
   
           "networkProfile": {

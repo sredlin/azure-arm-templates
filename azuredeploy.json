@@ -10,7 +10,7 @@
   
       "adminPassword": { "type": "securestring" },
   
-      "DNSName": { "type": "string" },
+     
 
       "vmName" : { "type": "string" },
 
@@ -63,7 +63,7 @@
   
           "dnsSettings": {
   
-            "domainNameLabel": "[parameters('DNSName')]"
+            "domainNameLabel": "[tolower(concat(parameters('vmName'),'-PublicDNS',uniqueString(resourceGroup().id)))]"
   
           }
   

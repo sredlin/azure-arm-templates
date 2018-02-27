@@ -77,7 +77,7 @@
   
         "type": "Microsoft.Network/virtualNetworks",
   
-        "name": "Azure-VNet'",
+        "name": "Azure-VNet",
   
         "location": "[resourceGroup().location]",
   

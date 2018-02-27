@@ -10,7 +10,9 @@
   
       "adminPassword": { "type": "securestring" },
   
-      "DNSName": { "type": "string" }
+      "DNSName": { "type": "string" },
+
+      "vmName" : { "type": "string" }
   
     },
   
@@ -146,7 +148,7 @@
   
           "osProfile": {
   
-            "computerName": "myVM",
+            "computerName": "[parameters('vmName')]",
   
             "adminUsername": "[parameters('adminUsername')]",
   
@@ -181,15 +183,17 @@
 
                 {
     
-                  "name": "dataDisks",
+                  "name": "dataDisksloop",
     
-                  "count": 2,
+                  "count": 1,
     
                   "input": {
+
+                    "name": "[concat(parameters('vmName'),'-dataDisk0')]",
     
                     "diskSizeGB": 10,
     
-                    "lun": "[copyIndex('dataDisks')]",
+                    "lun": "[copyIndex('dataDisksloop')]",
     
                     "createOption": "Empty"
     

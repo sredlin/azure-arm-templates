@@ -63,7 +63,7 @@
   
           "dnsSettings": {
   
-            "domainNameLabel": "[tolower(concat(parameters('vmName'),'-PublicDNS',uniqueString(resourceGroup().id)))]"
+            "domainNameLabel": "[tolower(concat(parameters('vmName'),'-PublicDNS-',uniqueString(resourceGroup().id)))]"
   
           }
   
@@ -239,7 +239,33 @@
   
         }
   
-      }
+      },
+      {
+        "apiVersion": "2015-06-15",
+        "type": "Microsoft.Compute/virtualMachines/extensions",
+        "name": "HDD-Config",
+        "location": "[resourceGroup().location]",
+        "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+            
+        ],
+        "tags": {
+            "displayName": "HDD-Config"
+        },
+        "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.9",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+               
+            },
+            "protectedSettings": {
+                "commandToExecute":"powershell Add-WindowsFeature Web-Server"
+
+            }
+        }
+    }
   
     ]
   

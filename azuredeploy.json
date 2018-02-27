@@ -210,7 +210,7 @@
 
                     "name": "[concat(parameters('vmName'),'-dataDisk-',copyIndex('dataDisks'))]",
     
-                    "diskSizeGB": 10,
+                    "diskSizeGB": 5,
     
                     "lun": "[copyIndex('dataDisks')]",
     
@@ -239,33 +239,7 @@
   
         }
   
-      },
-      {
-        "apiVersion": "2015-06-15",
-        "type": "Microsoft.Compute/virtualMachines/extensions",
-        "name": "HDD-Config",
-        "location": "[resourceGroup().location]",
-        "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-            
-        ],
-        "tags": {
-            "displayName": "HDD-Config"
-        },
-        "properties": {
-            "publisher": "Microsoft.Compute",
-            "type": "CustomScriptExtension",
-            "typeHandlerVersion": "1.9",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-               
-            },
-            "protectedSettings": {
-                "commandToExecute":"powershell Add-WindowsFeature Web-Server"
-
-            }
-        }
-    }
+      }
   
     ]
   

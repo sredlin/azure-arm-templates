@@ -183,7 +183,7 @@
 
                 {
     
-                  "name": "dataDisksloop",
+                  "name": "dataDisks",
     
                   "count": 1,
     
@@ -193,7 +193,7 @@
     
                     "diskSizeGB": 10,
     
-                    "lun": "[copyIndex('dataDisksloop')]",
+                    "lun": "[copyIndex('dataDisks')]",
     
                     "createOption": "Empty"
     

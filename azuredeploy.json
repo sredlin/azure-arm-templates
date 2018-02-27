@@ -37,7 +37,7 @@
   
     "variables": {
   
-      "vnetID": "[resourceId('Microsoft.Network/virtualNetworks','Azure-VNet')]",
+      "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'Azure-VNet')]",
   
       
   

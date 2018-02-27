@@ -132,7 +132,7 @@
   
         "type": "Microsoft.Compute/virtualMachines",
   
-        "name": "myVM",
+        "name": "[parameters('vmName')]",
   
         "location": "[resourceGroup().location]",
   

@@ -37,11 +37,11 @@
   
     "variables": {
   
-      "vnetID": "[resourceId('Microsoft.Network/virtualNetworks','myVNet')]",
+      "vnetID": "[resourceId('Microsoft.Network/virtualNetworks','Azure-VNet')]",
   
       
   
-      "subnetRef": "[concat(variables('vnetID'),'/subnets/mySubnet')]" 
+      "subnetRef": "[concat(variables('vnetID'),'/subnets/DC-Subnet')]" 
   
     },
   
@@ -77,7 +77,7 @@
   
         "type": "Microsoft.Network/virtualNetworks",
   
-        "name": "myVNet",
+        "name": "Azure-VNet'",
   
         "location": "[resourceGroup().location]",
   
@@ -89,7 +89,7 @@
   
             {
   
-              "name": "mySubnet",
+              "name": "DC-Subnet",
   
               "properties": { "addressPrefix": "10.0.0.0/24" }
   
@@ -115,7 +115,7 @@
   
           "[resourceId('Microsoft.Network/publicIPAddresses/', concat(parameters('vmName'),'-PublicIPAddress'))]",
   
-          "[resourceId('Microsoft.Network/virtualNetworks/', 'myVNet')]"
+          "[resourceId('Microsoft.Network/virtualNetworks/', 'Azure-VNet')]"
   
         ],
   

@@ -172,7 +172,7 @@
   
             "osDisk": {
   
-              "name": "DC-01-OSDisk",
+              "name": "[concat(parameters('vmName'),'-OSDisk')]",
   
               "caching": "ReadWrite",
   

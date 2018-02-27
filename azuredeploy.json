@@ -23,7 +23,7 @@
           "2016-Datacenter"
         ]},
         "DataDiscCount": {
-            "type": "string",
+            "type": "int",
             "defaultValue": "2",
             "allowedValues": [
               

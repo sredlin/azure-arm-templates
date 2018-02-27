@@ -12,7 +12,26 @@
   
       "DNSName": { "type": "string" },
 
-      "vmName" : { "type": "string" }
+      "vmName" : { "type": "string" },
+
+      "windowsOSVersion": {
+        "type": "string",
+        "defaultValue": "2016-Datacenter",
+        "allowedValues": [
+          
+          "2012-R2-Datacenter",
+          "2016-Datacenter"
+        ]},
+        "DataDiscCount": {
+            "type": "string",
+            "defaultValue": "2",
+            "allowedValues": [
+              
+              "2",
+              "4",
+              "6",
+              "8"
+            ]}
   
     },
   
@@ -164,7 +183,7 @@
   
               "offer": "WindowsServer",
   
-              "sku": "2012-R2-Datacenter",
+              "sku": "[parameters('windowsOSVersion')]",
   
               "version": "latest"
   
@@ -185,7 +204,7 @@
     
                   "name": "dataDisks",
     
-                  "count": 4,
+                  "count": "[parameters('DataDiscCount')]",
     
                   "input": {
 

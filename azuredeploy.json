@@ -87,6 +87,7 @@
         "properties": {
   
           "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ] },
+          "networkSecurityGroup": {"id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'Allow-RDP')]"},
   
           "subnets": [
   
@@ -94,15 +95,10 @@
   
               "name": "DC-Subnet",
   
-              "properties": { "addressPrefix": "10.0.0.0/24" },
+              "properties": { "addressPrefix": "10.0.0.0/24" }
 
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'Allow-RDP')]"
-              }
-
-
-  
             }
+           
   
           ]
   

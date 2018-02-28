@@ -91,7 +91,13 @@
   
               "name": "DC-Subnet",
   
-              "properties": { "addressPrefix": "10.0.0.0/24" }
+              "properties": { "addressPrefix": "10.0.0.0/24" },
+
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'NSG - RDP Allow')]"
+                }
+
+
   
             }
   
@@ -239,6 +245,40 @@
   
         }
   
+      },
+
+      {
+        "apiVersion": "2017-03-01",
+        "type": "Microsoft.Network/networkSecurityGroups",
+        "name": "NSG - RDP Allow",
+        "location": "[resourceGroup().location]",
+        "tags": {
+          "displayName": "NSG - RDP Allow"
+        },
+        "properties": {
+          "securityRules": [
+            {
+              "name": "rdp-rule",
+              "properties": {
+                "description": "Allow RDP",
+                "protocol": "Tcp",
+                "sourcePortRange": "*",
+                "destinationPortRange": "3389",
+                "sourceAddressPrefix": "Internet",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound"
+              }
+            }
+           ]
+        }
+
+
+
+
+
+
       }
   
     ]

@@ -80,7 +80,10 @@
         "name": "Azure-VNet",
   
         "location": "[resourceGroup().location]",
-  
+
+        "dependsOn": [
+            "[concat('Microsoft.Network/networkSecurityGroups/', 'Allow-RDP')]"
+        ],
         "properties": {
   
           "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ] },
@@ -91,9 +94,11 @@
   
               "name": "DC-Subnet",
   
-              "properties": { "addressPrefix": "10.0.0.0/24" }
+              "properties": { "addressPrefix": "10.0.0.0/24" },
 
-             
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'Allow-RDP')]"
+              }
 
 
   

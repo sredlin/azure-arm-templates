@@ -80,7 +80,10 @@
         "name": "Azure-VNet",
   
         "location": "[resourceGroup().location]",
-  
+
+        "dependsOn": [
+            "[concat('Microsoft.Network/networkSecurityGroups/', 'Allow-RDP')]"
+        ],
         "properties": {
   
           "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ] },

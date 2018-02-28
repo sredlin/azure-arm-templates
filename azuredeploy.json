@@ -91,11 +91,9 @@
   
               "name": "DC-Subnet",
   
-              "properties": { "addressPrefix": "10.0.0.0/24" },
+              "properties": { "addressPrefix": "10.0.0.0/24" }
 
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'NSG - RDP Allow')]"
-                }
+             
 
 
   

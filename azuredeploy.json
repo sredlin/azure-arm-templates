@@ -243,8 +243,31 @@
   
         }
   
+      },
+      {
+        "apiVersion": "2015-06-15",
+        "type": "Microsoft.Network/networkSecurityGroups",
+        "name": "Allow-RDP",
+        "location": "[resourceGroup().location]",
+        "properties": {
+          "securityRules": [
+            {
+                "name": "Allow-RDP",
+                "properties": {
+                  "description": "Allow-RDP",
+                  "protocol": "Tcp",
+                  "sourcePortRange": "*",
+                  "destinationPortRange": "3389",
+                  "sourceAddressPrefix": "Internet",
+                  "destinationAddressPrefix": "*",
+                  "access": "Allow",
+                  "priority": 101,
+                  "direction": "Inbound"
+              }
+            }
+          ]
+        }
       }
-
       
   
     ]

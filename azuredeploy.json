@@ -80,27 +80,24 @@
         "name": "Azure-VNet",
   
         "location": "[resourceGroup().location]",
-
-        "dependsOn": [
-            "[concat('Microsoft.Network/networkSecurityGroups/', 'Allow-RDP')]"
-        ],
+  
         "properties": {
   
           "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ] },
-           
+  
           "subnets": [
   
             {
   
               "name": "DC-Subnet",
   
-              "properties": { "addressPrefix": "10.0.0.0/24" 
-            
-            
-            }
+              "properties": { "addressPrefix": "10.0.0.0/24" }
 
+             
+
+
+  
             }
-           
   
           ]
   
@@ -132,13 +129,11 @@
   
             {
   
-              "name": "concat(parameters('vmName'),'-IPConfig')",
+              "name": "ipconfig1",
   
               "properties": {
-
-                "privateIPAddress": "10.0.0.10",
   
-                "privateIPAllocationMethod": "Static",
+                "privateIPAllocationMethod": "Dynamic",
   
                 "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('vmName'),'-PublicIPAddress'))]" },
   
@@ -195,14 +190,15 @@
               "sku": "[parameters('windowsOSVersion')]",
   
               "version": "latest"
-              },
+  
+            },
   
             "osDisk": {
   
               "name": "[concat(parameters('vmName'),'-OSDisk')]",
   
               "caching": "ReadWrite",
- 
+  
               "createOption": "FromImage"
   
             },
@@ -236,7 +232,8 @@
             "networkInterfaces": [
   
               {
-                  "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmName'),'-NIC'))]"
+  
+                "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmName'),'-NIC'))]"
   
               }
   

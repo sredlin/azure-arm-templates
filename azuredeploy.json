@@ -21,6 +21,7 @@
           
           "2012-R2-Datacenter",
           "2016-Datacenter"
+          
         ]},
         "DataDiscCount": {
             "type": "int",
@@ -31,11 +32,47 @@
               4,
               6,
               8
-            ]}
+            ]},
+
+           "DriveName": { "type": "string" }
+            
   
     },
   
     "variables": {
+
+        "DriveLetter" : { "type": "F" },
+
+        "scriptFolder": ".",
+        "scriptFileName": "Azure-New-Drive.ps1",
+
+        "scriptParameters": "[concat('-DriveName ', parameters('DriveName'), ' -DriveLetter', variables('DriveLetter'))]",
+
+
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
+            },
+            "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-custom-script-windows"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+            },
+            "defaultValue": ""
+        },
+
+
+
+
+
+
+
+
+
+
   
       "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'Azure-VNet-DC')]",
   
@@ -272,7 +309,28 @@
             }
           ]
         }
-      }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines/extensions",
+        "name": "CustomScriptExtension",
+        "apiVersion": "2017-03-30",
+        "location": "[resourceGroup().location]",
+        "dependsOn": [
+            "[parameters('vmName')]"
+        ],
+        "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.8",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+                "fileUris": [
+                    "[concat(variables('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), variables('_artifactsLocationSasToken'))]"
+                ],
+                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('scriptFileName'), ' ', variables('scriptParameters'))]"
+            }
+        }
+    }
       
   
     ]

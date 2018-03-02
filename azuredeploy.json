@@ -32,22 +32,21 @@
               4,
               6,
               8
-            ]},
+            ]}
 
-           "DriveName": { "type": "string" }
+           
             
   
     },
   
     "variables": {
 
-        "DriveLetter" : { "type": "string" },
+        
 
         "scriptFolder": ".",
         "scriptFileName": "Azure-New-Drive.ps1",
 
-        "scriptParameters": "[concat('-DriveName ', parameters('DriveName'), ' -DriveLetter', variables('DriveLetter'))]",
-
+       
 
         "_artifactsLocation": {
             "type": "string",

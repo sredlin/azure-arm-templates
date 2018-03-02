@@ -1,7 +1,7 @@
-﻿param (
-    [string]$DriveName,
-    [string]$DriveLetter
-)
+
+$DriveName = "ADDS"
+$DriveLetter = "F"
+
 
 New-StoragePool -FriendlyName "$DriveName" `
 -PhysicalDisks (Get-PhysicalDisk -CanPool $true) `

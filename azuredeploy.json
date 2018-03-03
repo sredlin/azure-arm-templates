@@ -46,11 +46,11 @@
         "scriptFolder": {
           
           "type" : "string",
-          "value": "."},
+          "defaultValue": "."},
         "scriptFileName":{
           
           "type" : "string",
-          "value":"Azure-New-Drive.ps1"
+          "defaultValue":"Azure-New-Drive.ps1"
       
       },
 

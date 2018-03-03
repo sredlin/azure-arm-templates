@@ -145,7 +145,7 @@
             "name": "[concat(parameters('vmName'),'-IPConfig')]",
 
             "properties": {
-              "privateIPAddress": "10..0.0.20",
+              "privateIPAddress": "10.0.0.20",
 
               "privateIPAllocationMethod": "Static",
 

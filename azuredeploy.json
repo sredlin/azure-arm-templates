@@ -84,7 +84,7 @@
     
       "properties": {
 
-        "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ] },
+        "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ]},
 
         "subnets": [
 
@@ -92,14 +92,15 @@
 
             "name": "DC-Subnet",
 
-            "properties": { "addressPrefix": "10.0.0.0/24" }
+            "properties": { "addressPrefix": "10.0.0.0/24"           
+            
+            }
 
 
 
 
 
           }
-
         ]
 
       }
@@ -130,7 +131,9 @@
       ],
 
       "properties": {
-
+        "dnsSettings":{
+          "dnsServers":["10.0.0.5"]
+      },
         "networkSecurityGroup": {
           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'Allow-RDP')]"
         },
@@ -142,6 +145,7 @@
             "name": "[concat(parameters('vmName'),'-IPConfig')]",
 
             "properties": {
+              "privateIPAddress": "10..0.0.20",
 
               "privateIPAllocationMethod": "Dynamic",
 

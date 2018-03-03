@@ -31,17 +31,29 @@
             4,
             6,
             8
-          ]}
+          ]},
+
+          "DeplyomentType": {
+            "type": "string",
+            "defaultValue": "",
+            "allowedValues": [
+              
+              "DC",
+              "SQL",
+              "Frontend"
+              
+            ]}
+            
 
   },
 
   "variables": {
 
-    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'Azure-VNet-DC')]",
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', concat('Azure-Vnet-',parameters('DeplyomentType')))]",
 
     
 
-    "subnetRef": "[concat(variables('vnetID'),'/subnets/DC-Subnet')]" 
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('DeplyomentType'), '-Subnet')]" 
 
   },
 
@@ -49,7 +61,7 @@
 
     {
       "type": "Microsoft.Compute/availabilitySets",
-      "name": "HAS",
+      "name": "[concat('HA-',parameters('DeplyomentType'))]",
       "apiVersion": "[providers('Microsoft.Compute', 'availabilitySets').apiVersions[0]]",
 	"location": "[resourceGroup().location]",
 	"properties": {
@@ -94,7 +106,7 @@
 
       "type": "Microsoft.Network/virtualNetworks",
 
-      "name": "Azure-VNet-DC",
+      "name": "concat('Azure-VNet-',parameters('DeplyomentType'))",
 
       "location": "[resourceGroup().location]",
 
@@ -107,7 +119,7 @@
 
           {
 
-            "name": "DC-Subnet",
+            "name": "concat(parameters('DeplyomentType'), '-Subnet')",
 
             "properties": { "addressPrefix": "10.0.0.0/24"           
             
@@ -138,7 +150,7 @@
 
         "[resourceId('Microsoft.Network/publicIPAddresses/', concat(parameters('vmName'),'-PublicIPAddress'))]",
 
-        "[resourceId('Microsoft.Network/virtualNetworks/', 'Azure-VNet-DC')]",
+        "[resourceId('Microsoft.Network/virtualNetworks/', concat('Azure-VNet-',parameters('DeplyomentType')))]",
 
 
       
@@ -199,7 +211,7 @@
       "properties": {
 
         "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets', 'HAS')]"
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', concat('HA-', parameters('DeplyomentType')))]"
         },
 
         "hardwareProfile": { "vmSize": "Standard_D2" },

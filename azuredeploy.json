@@ -50,13 +50,17 @@
     {
       "type": "Microsoft.Compute/availabilitySets",
       "name": "HAS",
-      "apiVersion": "2017-03-30",
+      "apiVersion": "[providers('Microsoft.Compute', 'availabilitySets').apiVersions[0]]",
 	"location": "[resourceGroup().location]",
 	"properties": {
 	    "platformFaultDomainCount": 2,
-	    "platformUpdateDomainCount": 3,
-	    "managed" : "true"
-	}
+	    "platformUpdateDomainCount": 3
+	    
+  },
+  
+  "sku": {
+    "name": "Aligned"
+  }
     },
 
 

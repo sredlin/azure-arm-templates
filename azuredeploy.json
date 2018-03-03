@@ -6,7 +6,9 @@
 
   "parameters": {
 
-    "adminUsername": { "type": "string" },
+    "adminUsername": { "type": "string",
+      "defaultValue": "Adminvsc"
+    },
 
     "adminPassword": { "type": "securestring" },
 

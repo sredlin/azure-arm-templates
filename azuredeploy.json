@@ -1,353 +1,280 @@
 {
 
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  
-    "contentVersion": "1.0.0.0",
-  
-    "parameters": {
-  
-      "adminUsername": { "type": "string" },
-  
-      "adminPassword": { "type": "securestring" },
-  
-     
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
 
-      "vmName" : { "type": "string" },
+  "contentVersion": "1.0.0.0",
 
-      "windowsOSVersion": {
-        "type": "string",
-        "defaultValue": "2016-Datacenter",
-        "allowedValues": [
-          
-          "2012-R2-Datacenter",
-          "2016-Datacenter"
-          
-        ]},
-        "DataDiscCount": {
-            "type": "int",
-            "defaultValue": 2,
-            "allowedValues": [
-              
-              2,
-              4,
-              6,
-              8
-            ]}
+  "parameters": {
 
-           
-            
-  
-    },
-  
-    "variables": {
+    "adminUsername": { "type": "string" },
 
+    "adminPassword": { "type": "securestring" },
+
+   
+
+    "vmName" : { "type": "string" },
+
+    "windowsOSVersion": {
+      "type": "string",
+      "defaultValue": "2016-Datacenter",
+      "allowedValues": [
         
+        "2012-R2-Datacenter",
+        "2016-Datacenter"
+      ]},
+      "DataDiscCount": {
+          "type": "int",
+          "defaultValue": 2,
+          "allowedValues": [
+            
+            2,
+            4,
+            6,
+            8
+          ]}
 
-        "scriptFolder": {
-          
-          "type" : "string",
-          "defaultValue": "."},
-        "scriptFileName":{
-          
-          "type" : "string",
-          "defaultValue":"Azure-New-Drive.ps1"
-      
-      },
+  },
 
-       
+  "variables": {
 
-        "_artifactsLocation": {
-            "type": "string",
-            "metadata": {
-                "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
-            },
-            "defaultValue": "https://github.com/sredlin/azure-arm-templates"
-        },
-        "_artifactsLocationSasToken": {
-            "type": "securestring",
-            "metadata": {
-                "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
-            },
-            "defaultValue": ""
-        },
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'Azure-VNet-DC')]",
 
+    
 
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/DC-Subnet')]" 
 
+  },
 
+  "resources": [
 
+    {
 
+      "apiVersion": "2016-03-30",
 
+      "type": "Microsoft.Network/publicIPAddresses",
 
+      "name": "[concat(parameters('vmName'),'-PublicIPAddress')]",
 
+      "location": "[resourceGroup().location]",
 
-  
-      "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'Azure-VNet-DC')]",
-  
-      
-  
-      "subnetRef": "[concat(variables('vnetID'),'/subnets/DC-Subnet')]" 
-  
+      "properties": {
+
+        "publicIPAllocationMethod": "Dynamic",
+
+        "dnsSettings": {
+
+          "domainNameLabel": "[tolower(concat(parameters('vmName'),'-PublicDNS-',uniqueString(resourceGroup().id)))]"
+
+        }
+
+      }
+
     },
-  
-    "resources": [
-  
-      {
-  
-        "apiVersion": "2016-03-30",
-  
-        "type": "Microsoft.Network/publicIPAddresses",
-  
-        "name": "[concat(parameters('vmName'),'-PublicIPAddress')]",
-  
-        "location": "[resourceGroup().location]",
-  
-        "properties": {
-  
-          "publicIPAllocationMethod": "Dynamic",
-  
-          "dnsSettings": {
-  
-            "domainNameLabel": "[tolower(concat(parameters('vmName'),'-PublicDNS-',uniqueString(resourceGroup().id)))]"
-  
+
+    {
+
+      "apiVersion": "2016-03-30",
+
+      "type": "Microsoft.Network/virtualNetworks",
+
+      "name": "Azure-VNet-DC",
+
+      "location": "[resourceGroup().location]",
+
+      "dependsOn": [
+          "[concat('Microsoft.Network/networkSecurityGroups/', 'Allow-RDP')]"
+      ],
+      "properties": {
+
+        "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ] },
+
+        "subnets": [
+
+          {
+
+            "name": "DC-Subnet",
+
+            "properties": { "addressPrefix": "10.0.0.0/24" },
+
+            "networkSecurityGroup": {
+              "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'Allow-RDP')]"
+            }
+
+
+
           }
-  
-        }
-  
-      },
-  
-      {
-  
-        "apiVersion": "2016-03-30",
-  
-        "type": "Microsoft.Network/virtualNetworks",
-  
-        "name": "Azure-VNet-DC",
-  
-        "location": "[resourceGroup().location]",
 
-        "dependsOn": [
-            "[concat('Microsoft.Network/networkSecurityGroups/', 'Allow-RDP')]"
-        ],
-        "properties": {
-  
-          "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ] },
-  
-          "subnets": [
-  
-            {
-  
-              "name": "DC-Subnet",
-  
-              "properties": { "addressPrefix": "10.0.0.0/24" },
+        ]
 
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'Allow-RDP')]"
-              }
+      }
 
+    },
 
-  
+    {
+
+      "apiVersion": "2016-03-30",
+
+      "type": "Microsoft.Network/networkInterfaces",
+
+      "name": "[concat(parameters('vmName'),'-NIC')]",
+
+      "location": "[resourceGroup().location]",
+
+      "dependsOn": [
+
+        "[resourceId('Microsoft.Network/publicIPAddresses/', concat(parameters('vmName'),'-PublicIPAddress'))]",
+
+        "[resourceId('Microsoft.Network/virtualNetworks/', 'Azure-VNet-DC')]"
+
+      ],
+
+      "properties": {
+
+        "ipConfigurations": [
+
+          {
+
+            "name": "[concat(parameters('vmName'),'-IPConfig')]",
+
+            "properties": {
+
+              "privateIPAllocationMethod": "Dynamic",
+
+              "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('vmName'),'-PublicIPAddress'))]" },
+
+              "subnet": { "id": "[variables('subnetRef')]" }
+
             }
-  
-          ]
-  
-        }
-  
-      },
-  
-      {
-  
-        "apiVersion": "2016-03-30",
-  
-        "type": "Microsoft.Network/networkInterfaces",
-  
-        "name": "[concat(parameters('vmName'),'-NIC')]",
-  
-        "location": "[resourceGroup().location]",
-  
-        "dependsOn": [
-  
-          "[resourceId('Microsoft.Network/publicIPAddresses/', concat(parameters('vmName'),'-PublicIPAddress'))]",
-  
-          "[resourceId('Microsoft.Network/virtualNetworks/', 'Azure-VNet-DC')]"
-  
-        ],
-  
-        "properties": {
-  
-          "ipConfigurations": [
-  
-            {
-  
-              "name": "[concat(parameters('vmName'),'-IPConfig')]",
-  
-              "properties": {
-  
-                "privateIPAllocationMethod": "Dynamic",
-  
-                "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('vmName'),'-PublicIPAddress'))]" },
-  
-                "subnet": { "id": "[variables('subnetRef')]" }
-  
-              }
-  
-            }
-  
-          ]
-  
-        }
-  
-      },
-  
-      {
-  
-        "apiVersion": "2016-04-30-preview",
-  
-        "type": "Microsoft.Compute/virtualMachines",
-  
-        "name": "[parameters('vmName')]",
-  
-        "location": "[resourceGroup().location]",
-  
-        "dependsOn": [
-  
-          "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmName'),'-NIC'))]"
-  
-        ],
-  
-        "properties": {
-  
-          "hardwareProfile": { "vmSize": "Standard_D2" },
-  
-          "osProfile": {
-  
-            "computerName": "[parameters('vmName')]",
-  
-            "adminUsername": "[parameters('adminUsername')]",
-  
-            "adminPassword": "[parameters('adminPassword')]"
-  
-          },
-  
-          "storageProfile": {
-  
-            "imageReference": {
-  
-              "publisher": "MicrosoftWindowsServer",
-  
-              "offer": "WindowsServer",
-  
-              "sku": "[parameters('windowsOSVersion')]",
-  
-              "version": "latest"
-  
-            },
-  
-            "osDisk": {
-  
-              "name": "[concat(parameters('vmName'),'-OSDisk')]",
-  
-              "caching": "ReadWrite",
-  
-              "createOption": "FromImage"
-  
-            },
-            "copy": [
 
-                {
-    
-                  "name": "dataDisks",
-    
-                  "count": "[parameters('DataDiscCount')]",
-    
-                  "input": {
+          }
 
-                    "name": "[concat(parameters('vmName'),'-dataDisk-',copyIndex('dataDisks'))]",
-    
-                    "diskSizeGB": 5,
-    
-                    "lun": "[copyIndex('dataDisks')]",
-    
-                    "createOption": "Empty"
-    
-                  }
-    
-                }
-    
-              ]
+        ]
+
+      }
+
+    },
+
+    {
+
+      "apiVersion": "2016-04-30-preview",
+
+      "type": "Microsoft.Compute/virtualMachines",
+
+      "name": "[parameters('vmName')]",
+
+      "location": "[resourceGroup().location]",
+
+      "dependsOn": [
+
+        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmName'),'-NIC'))]"
+
+      ],
+
+      "properties": {
+
+        "hardwareProfile": { "vmSize": "Standard_D2" },
+
+        "osProfile": {
+
+          "computerName": "[parameters('vmName')]",
+
+          "adminUsername": "[parameters('adminUsername')]",
+
+          "adminPassword": "[parameters('adminPassword')]"
+
+        },
+
+        "storageProfile": {
+
+          "imageReference": {
+
+            "publisher": "MicrosoftWindowsServer",
+
+            "offer": "WindowsServer",
+
+            "sku": "[parameters('windowsOSVersion')]",
+
+            "version": "latest"
+
           },
-  
-          "networkProfile": {
-  
-            "networkInterfaces": [
-  
+
+          "osDisk": {
+
+            "name": "[concat(parameters('vmName'),'-OSDisk')]",
+
+            "caching": "ReadWrite",
+
+            "createOption": "FromImage"
+
+          },
+          "copy": [
+
               {
   
-                "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmName'),'-NIC'))]"
+                "name": "dataDisks",
+  
+                "count": "[parameters('DataDiscCount')]",
+  
+                "input": {
+
+                  "name": "[concat(parameters('vmName'),'-dataDisk-',copyIndex('dataDisks'))]",
+  
+                  "diskSizeGB": 5,
+  
+                  "lun": "[copyIndex('dataDisks')]",
+  
+                  "createOption": "Empty"
+  
+                }
   
               }
   
-            ],
-            "resources" :
-            
+            ]
+        },
+
+        "networkProfile": {
+
+          "networkInterfaces": [
+
             {
-              "type": "Microsoft.Compute/virtualMachines/extensions",
-              "name": "CustomScriptExtension",
-              "apiVersion": "2017-03-30",
-              "location": "[resourceGroup().location]",
-              "dependsOn": [
-                  "[parameters('vmName')]"
-              ],
-              "properties": {
-                  "publisher": "Microsoft.Compute",
-                  "type": "CustomScriptExtension",
-                  "typeHandlerVersion": "1.8",
-                  "autoUpgradeMinorVersion": true,
-                  "settings": {
-                      "fileUris": [
-                          "[concat(variables('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), variables('_artifactsLocationSasToken'))]"
-                      ],
-                      "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('scriptFileName'))]"
-                  }
-              }
-          }
 
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmName'),'-NIC'))]"
 
-
-
-
-  
-          }
-  
-        }
-  
-      },
-      {
-        "apiVersion": "2015-06-15",
-        "type": "Microsoft.Network/networkSecurityGroups",
-        "name": "Allow-RDP",
-        "location": "[resourceGroup().location]",
-        "properties": {
-          "securityRules": [
-            {
-                "name": "Allow-RDP",
-                "properties": {
-                  "description": "Allow-RDP",
-                  "protocol": "Tcp",
-                  "sourcePortRange": "*",
-                  "destinationPortRange": "3389",
-                  "sourceAddressPrefix": "Internet",
-                  "destinationAddressPrefix": "*",
-                  "access": "Allow",
-                  "priority": 101,
-                  "direction": "Inbound"
-              }
             }
+
           ]
+
         }
+
       }
-     
-      
-  
-    ]
-  
-  }
+
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "Allow-RDP",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "securityRules": [
+          {
+              "name": "Allow-RDP",
+              "properties": {
+                "description": "Allow-RDP",
+                "protocol": "Tcp",
+                "sourcePortRange": "*",
+                "destinationPortRange": "3389",
+                "sourceAddressPrefix": "Internet",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 101,
+                "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    }
+    
+
+  ]
+
+}

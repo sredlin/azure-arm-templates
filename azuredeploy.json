@@ -216,7 +216,7 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets', concat('HA-', parameters('DeplyomentType')))]"
         },
 
-        "hardwareProfile": { "vmSize": "Standard_D2" },
+        "hardwareProfile": { "vmSize": "Standard_D2"},
 
         "osProfile": {
 
@@ -289,7 +289,32 @@
 
           ]
 
-        }
+        },
+
+        "resources": [
+          {
+              "type": "Microsoft.Compute/virtualMachines/extensions",
+              "name": "[concat(parameters('vmName'),'/CustomScriptExtension')]",
+              "apiVersion": "2015-05-01-preview",
+              "location": "[resourceGroup().location]",
+              "dependsOn": [
+                  "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+              ],
+              "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "CustomScriptExtension",
+                 "typeHandlerVersion": "1.7",
+                 "autoUpgradeMinorVersion":true,
+                 "settings": {
+                     "fileUris": [ "https://raw.githubusercontent.com/sredlin/azure-arm-templates/master/Azure-New-Drive.ps1" ],
+                       "commandToExecute": "powershell -File './Azure-New-Drive.ps1'"
+                 }
+             }
+          }
+        ]
+
+
+
 
       }
 

@@ -255,13 +255,13 @@
 
               {
   
-                "name": "dataDisks",
+                "name": "[concat(parameters('vmName'),'-dataDisk-',copyIndex(1))]",
   
                 "count": "[parameters('DataDiscCount')]",
   
                 "input": {
 
-                  "name": "[concat(parameters('vmName'),'-dataDisk-',copyIndex('dataDisks'))]",
+                  "name": "[concat(parameters('vmName'),'-dataDisk-',copyIndex(1))]",
   
                   "diskSizeGB": 5,
   

@@ -261,7 +261,7 @@
   
                 "input": {
 
-                  "name": "[concat(parameters('vmName'),'-dataDisk-',copyIndex('dataDisks'))]",
+                  "name": "[concat(parameters('vmName'),'-dataDisk-',copyIndex())]",
   
                   "diskSizeGB": 5,
   

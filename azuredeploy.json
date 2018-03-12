@@ -255,7 +255,7 @@
 
               {
   
-                "name": "dataDisks",
+                "name": "[concat(parameters('vmName'),'-dataDisk-',copyIndex(1))]",
   
                 "count": "[parameters('DataDiscCount')]",
   

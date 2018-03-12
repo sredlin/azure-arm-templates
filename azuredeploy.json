@@ -44,7 +44,13 @@
               "SQL",
               "Frontend"
               
-            ]}
+            ]},
+            "numberOfInstances": {
+              "type": "int",
+              "defaultValue": 2,
+              "minValue": 2,
+              "maxValue": 5}
+              
             
 
   },
@@ -84,9 +90,15 @@
 
       "type": "Microsoft.Network/publicIPAddresses",
 
-      "name": "[concat(parameters('vmName'),'-PublicIPAddress')]",
+      "name": "[concat(parameters('vmName'),copyindex(),'-PublicIPAddress')]",
 
       "location": "[resourceGroup().location]",
+      "copy": {
+        
+        "name": "publicipaddressloop",
+        "count": "[parameters('numberOfInstances')]"
+        
+              },
 
       "properties": {
 
@@ -94,7 +106,7 @@
 
         "dnsSettings": {
 
-          "domainNameLabel": "[tolower(concat(parameters('vmName'),'-PublicDNS-',uniqueString(resourceGroup().id)))]"
+          "domainNameLabel": "[tolower(concat(parameters('vmName'),copyindex(),'-PublicDNS-',uniqueString(resourceGroup().id)))]"
 
         }
 
@@ -144,13 +156,20 @@
 
       "type": "Microsoft.Network/networkInterfaces",
 
-      "name": "[concat(parameters('vmName'),'-NIC')]",
+      "name": "[concat(parameters('vmName'),copyindex(),'-NIC')]",
 
       "location": "[resourceGroup().location]",
 
+      "copy": {
+        
+"name": "nicloop",
+"count": "[parameters('numberOfInstances')]"
+
+      },
+
       "dependsOn": [
 
-        "[resourceId('Microsoft.Network/publicIPAddresses/', concat(parameters('vmName'),'-PublicIPAddress'))]",
+        "[resourceId('Microsoft.Network/publicIPAddresses/', concat(parameters('vmName'),copyindex(),'-PublicIPAddress'))]",
 
         "[resourceId('Microsoft.Network/virtualNetworks/', concat('Azure-VNet-',parameters('DeplyomentType')))]",
 
@@ -173,14 +192,14 @@
 
           {
 
-            "name": "[concat(parameters('vmName'),'-IPConfig')]",
+            "name": "[concat(parameters('vmName'),copyindex(),'-IPConfig')]",
 
             "properties": {
-              "privateIPAddress": "10.0.0.20",
+              
 
-              "privateIPAllocationMethod": "Static",
+              "privateIPAllocationMethod": "Dynamic",
 
-              "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('vmName'),'-PublicIPAddress'))]" },
+              "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('vmName'),copyindex(),'-PublicIPAddress'))]" },
 
               "subnet": { "id": "[variables('subnetRef')]" }
 
@@ -200,13 +219,20 @@
 
       "type": "Microsoft.Compute/virtualMachines",
 
-      "name": "[parameters('vmName')]",
+      "name": "[concat(parameters('vmName'),copyindex())]",
 
       "location": "[resourceGroup().location]",
+"copy": {
+  
+  "name": "vmloop",
+  "count": "[parameters('numberOfInstances')]"
+  
+        },
+      
 
       "dependsOn": [
 
-        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmName'),'-NIC'))]"
+        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmName'),copyindex(),'-NIC'))]"
 
       ],
 
@@ -220,7 +246,7 @@
 
         "osProfile": {
 
-          "computerName": "[parameters('vmName')]",
+          "computerName": "[concat(parameters('vmName'),copyindex())]",
 
           "adminUsername": "[parameters('adminUsername')]",
 
@@ -244,7 +270,7 @@
 
           "osDisk": {
 
-            "name": "[concat(parameters('vmName'),'-OSDisk')]",
+            "name": "[concat(parameters('vmName'),copyindex(),'-OSDisk')]",
 
             "caching": "ReadWrite",
 
@@ -261,7 +287,7 @@
   
                 "input": {
 
-                  "name": "[concat(parameters('vmName'),'-dataDisk-',copyIndex('dataDisks'))]",
+                  "name": "[concat(parameters('vmName'),copyindex(),'-dataDisk-',copyIndex('dataDisks'))]",
   
                   "diskSizeGB": 5,
   

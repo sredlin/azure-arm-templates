@@ -309,7 +309,7 @@
 
             {
 
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmName'),'-NIC'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmName'),copyindex(),'-NIC'))]"
 
             }
 

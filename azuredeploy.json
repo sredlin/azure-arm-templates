@@ -37,7 +37,7 @@
 
           "DeplyomentType": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "DC",
             "allowedValues": [
               
               "DC",
@@ -261,7 +261,7 @@
   
                 "input": {
 
-                  "name": "[concat(parameters('vmName'),'-dataDisk-',copyIndex('dataDisks'))]",
+                  "name": "[concat(parameters('vmName'),'-dataDisk-',copyIndex(1))]",
   
                   "diskSizeGB": 5,
   

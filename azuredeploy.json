@@ -39,11 +39,12 @@
             "type": "string",
             "defaultValue": "DC",
             "allowedValues": [
-              
+
               "DC",
               "SQL",
-              "Frontend"
-              
+              "Frontend",
+              "Backend"
+
             ]},
             "numberOfInstances": {
               "type": "int",
@@ -294,7 +295,7 @@
                   "lun": "[copyIndex('dataDisks')]",
   
                   "createOption": "Empty"
-  
+ 
                 }
   
               }

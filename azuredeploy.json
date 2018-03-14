@@ -1,106 +1,93 @@
 {
-
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-
   "contentVersion": "1.0.0.0",
-
   "parameters": {
-
-    "adminUsername": { "type": "string",
-      "defaultValue": "Adminvsc"
-    },
-
     "adminPassword": { "type": "securestring" },
+    "adminUsername": {
+      "defaultValue": "Adminvsc",
+      "type": "string"
+    },
+    "DataDiscCount": {
+      "type": "int",
+      "defaultValue": 2,
+      "allowedValues": [
 
-   
+        2,
+        4,
+        6,
+        8
+      ]
+    },
+    "DeplyomentType": {
+      "allowedValues": [
 
-    "vmName" : { "type": "string" },
+        "DC",
+        "SQL",
+        "Frontend",
+        "Backend"
 
+      ],
+      "defaultValue": "DC",
+      "type": "string"
+    },
+    "numberOfInstances": {
+      "type": "int",
+      "defaultValue": 2,
+      "minValue": 2,
+      "maxValue": 5
+    },
+    "vmName": { "type": "string" },
     "windowsOSVersion": {
       "type": "string",
       "defaultValue": "2016-Datacenter",
       "allowedValues": [
-        
+
         "2012-R2-Datacenter",
         "2016-Datacenter"
-      ]},
-      "DataDiscCount": {
-          "type": "int",
-          "defaultValue": 2,
-          "allowedValues": [
-            
-            2,
-            4,
-            6,
-            8
-          ]},
-
-          "DeplyomentType": {
-            "type": "string",
-            "defaultValue": "DC",
-            "allowedValues": [
-
-              "DC",
-              "SQL",
-              "Frontend",
-              "Backend"
-
-            ]},
-            "numberOfInstances": {
-              "type": "int",
-              "defaultValue": 2,
-              "minValue": 2,
-              "maxValue": 5}
-              
-            
-
+      ]
+    },
+    "_artifactsLocation": {
+      "type": "string",
+      "defaultValue" : "https://raw.githubusercontent.com/sredlin/azure-arm-templates/master/Azure-New-Drive.ps1",
+      "metadata": {
+        "description": "Auto-generated container in staging storage account to receive post-build staging folder upload"
+      }
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Auto-generated token to access _artifactsLocation"
+      }
+    }
   },
-
-  "variables": {
-
-    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', concat('Azure-Vnet-',parameters('DeplyomentType')))]",
-
-    
-
-    "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('DeplyomentType'), '-Subnet')]" 
-
-  },
-
   "resources": [
 
     {
-      "type": "Microsoft.Compute/availabilitySets",
-      "name": "[concat('HA-',parameters('DeplyomentType'))]",
       "apiVersion": "[providers('Microsoft.Compute', 'availabilitySets').apiVersions[0]]",
-	"location": "[resourceGroup().location]",
-	"properties": {
-	    "platformFaultDomainCount": 2,
-	    "platformUpdateDomainCount": 3
-	    
-  },
-  
-  "sku": {
-    "name": "Aligned"
-  }
+      "location": "[resourceGroup().location]",
+      "name": "[concat('HA-',parameters('DeplyomentType'))]",
+      "properties": {
+        "platformFaultDomainCount": 2,
+        "platformUpdateDomainCount": 3
+
+      },
+      "sku": {
+        "name": "Aligned"
+      },
+      "type": "Microsoft.Compute/availabilitySets"
     },
 
 
     {
-
       "apiVersion": "2016-03-30",
-
-      "type": "Microsoft.Network/publicIPAddresses",
-
-      "name": "[concat(parameters('vmName'),copyindex(1),'-PublicIPAddress')]",
-
-      "location": "[resourceGroup().location]",
       "copy": {
-        
+
         "name": "publicipaddressloop",
         "count": "[parameters('numberOfInstances')]"
-        
-              },
 
+      },
+      "location": "[resourceGroup().location]",
+      "name": "[concat(parameters('vmName'),copyindex(1),'-PublicIPAddress')]",
       "properties": {
 
         "publicIPAllocationMethod": "Dynamic",
@@ -111,24 +98,17 @@
 
         }
 
-      }
-
+      },
+      "type": "Microsoft.Network/publicIPAddresses"
     },
 
     {
-
       "apiVersion": "2016-03-30",
-
-      "type": "Microsoft.Network/virtualNetworks",
-
-      "name": "[concat('Azure-VNet-',parameters('DeplyomentType'))]",
-
       "location": "[resourceGroup().location]",
-
-    
+      "name": "[concat('Azure-VNet-',parameters('DeplyomentType'))]",
       "properties": {
 
-        "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ]},
+        "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ] },
 
         "subnets": [
 
@@ -136,8 +116,9 @@
 
             "name": "[concat(parameters('DeplyomentType'), '-Subnet')]",
 
-            "properties": { "addressPrefix": "10.0.0.0/24"           
-            
+            "properties": {
+              "addressPrefix": "10.0.0.0/24"
+
             }
 
 
@@ -147,27 +128,18 @@
           }
         ]
 
-      }
-
+      },
+      "type": "Microsoft.Network/virtualNetworks"
     },
 
     {
-
       "apiVersion": "2016-03-30",
-
-      "type": "Microsoft.Network/networkInterfaces",
-
-      "name": "[concat(parameters('vmName'),copyindex(1),'-NIC')]",
-
-      "location": "[resourceGroup().location]",
-
       "copy": {
-        
-"name": "nicloop",
-"count": "[parameters('numberOfInstances')]"
+
+        "name": "nicloop",
+        "count": "[parameters('numberOfInstances')]"
 
       },
-
       "dependsOn": [
 
         "[resourceId('Microsoft.Network/publicIPAddresses/', concat(parameters('vmName'),copyindex(1),'-PublicIPAddress'))]",
@@ -175,16 +147,17 @@
         "[resourceId('Microsoft.Network/virtualNetworks/', concat('Azure-VNet-',parameters('DeplyomentType')))]",
 
 
-      
+
         "[concat('Microsoft.Network/networkSecurityGroups/', 'Allow-RDP')]"
-      
+
 
       ],
-
+      "location": "[resourceGroup().location]",
+      "name": "[concat(parameters('vmName'),copyindex(1),'-NIC')]",
       "properties": {
-        "dnsSettings":{
-          "dnsServers":["10.0.0.5"]
-      },
+        "dnsSettings": {
+          "dnsServers": [ "10.0.0.5" ]
+        },
         "networkSecurityGroup": {
           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'Allow-RDP')]"
         },
@@ -196,7 +169,7 @@
             "name": "[concat(parameters('vmName'),copyindex(1),'-IPConfig')]",
 
             "properties": {
-              
+
 
               "privateIPAllocationMethod": "Dynamic",
 
@@ -210,40 +183,30 @@
 
         ]
 
-      }
-
+      },
+      "type": "Microsoft.Network/networkInterfaces"
     },
 
     {
-
       "apiVersion": "2016-04-30-preview",
-
-      "type": "Microsoft.Compute/virtualMachines",
-
-      "name": "[concat(parameters('vmName'),copyindex(1))]",
-
-      "location": "[resourceGroup().location]",
-"copy": {
-  
-  "name": "vmloop",
-  "count": "[parameters('numberOfInstances')]"
-  
-        },
-      
-
+      "copy": {
+        "count": "[parameters('numberOfInstances')]",
+        "name": "vmloop"
+      },
       "dependsOn": [
 
         "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmName'),copyindex(1),'-NIC'))]"
 
       ],
-
+      "location": "[resourceGroup().location]",
+      "name": "[concat(parameters('vmName'),copyindex(1))]",
       "properties": {
 
         "availabilitySet": {
           "id": "[resourceId('Microsoft.Compute/availabilitySets', concat('HA-', parameters('DeplyomentType')))]"
         },
 
-        "hardwareProfile": { "vmSize": "Standard_D2"},
+        "hardwareProfile": { "vmSize": "Standard_D2" },
 
         "osProfile": {
 
@@ -280,27 +243,27 @@
           },
           "copy": [
 
-              {
-  
-                "name": "dataDisks",
-  
-                "count": "[parameters('DataDiscCount')]",
-  
-                "input": {
+            {
 
-                  "name": "[concat(parameters('vmName'),copyindex(1),'-dataDisk-',copyIndex('dataDisks'))]",
-  
-                  "diskSizeGB": 5,
-  
-                  "lun": "[copyIndex('dataDisks')]",
-  
-                  "createOption": "Empty"
- 
-                }
-  
+              "name": "dataDisks",
+
+              "count": "[parameters('DataDiscCount')]",
+
+              "input": {
+
+                "name": "[concat(parameters('vmName'),copyindex(1),'-dataDisk-',copyIndex('dataDisks'))]",
+
+                "diskSizeGB": 5,
+
+                "lun": "[copyIndex('dataDisks')]",
+
+                "createOption": "Empty"
+
               }
-  
-            ]
+
+            }
+
+          ]
 
         },
 
@@ -315,7 +278,7 @@
             }
 
           ]
-        
+
 
         }
 
@@ -325,35 +288,66 @@
 
 
 
-      }
-
+      },
+      "type": "Microsoft.Compute/virtualMachines",
+      "resources": [
+        {
+          "name": "HDD",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2016-03-30",
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('vmName'),copyindex(1)))]"
+          ],
+          "tags": {
+            "displayName": "HDD"
+          },
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.4",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "fileUris": [
+                "[concat(parameters('_artifactsLocation'), '/', variables('HDDScriptFolder'), '/', variables('HDDScriptFileName'), parameters('_artifactsLocationSasToken'))]"
+              ],
+              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('HDDScriptFolder'), '/', variables('HDDScriptFileName'))]"
+            }
+          }
+        }
+      ]
     },
     {
       "apiVersion": "2015-06-15",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "Allow-RDP",
       "location": "[resourceGroup().location]",
+      "name": "Allow-RDP",
       "properties": {
         "securityRules": [
           {
-              "name": "Allow-RDP",
-              "properties": {
-                "description": "Allow-RDP",
-                "protocol": "Tcp",
-                "sourcePortRange": "*",
-                "destinationPortRange": "3389",
-                "sourceAddressPrefix": "Internet",
-                "destinationAddressPrefix": "*",
-                "access": "Allow",
-                "priority": 101,
-                "direction": "Inbound"
+            "name": "Allow-RDP",
+            "properties": {
+              "description": "Allow-RDP",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
             }
           }
         ]
-      }
+      },
+      "type": "Microsoft.Network/networkSecurityGroups"
     }
-    
 
-  ]
 
+  ],
+  "variables": {
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('DeplyomentType'), '-Subnet')]",
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', concat('Azure-Vnet-',parameters('DeplyomentType')))]",
+    "HDDScriptFolder": ".",
+    "HDDScriptFileName": "Azure-New-Drive.ps1"
+  }
 }

@@ -63,13 +63,6 @@
       "metadata": {
         "description": "Auto-generated container in staging storage account to receive post-build staging folder upload"
       }
-    },
-    "_artifactsLocationSasToken": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Auto-generated token to access _artifactsLocation"
-      }
     }
 
 
@@ -330,14 +323,12 @@
             "typeHandlerVersion": "1.4",
             "autoUpgradeMinorVersion": true,
             "settings": {
-              "fileUris": [
-                "https://raw.githubusercontent.com/Microsoft/dotnet-core-sample-templates/master/dotnet-core-music-windows/scripts/configure-music-app.ps1"
-              ]
+              "fileUris": [ "parameters('_artifactsLocation')" ]
 
             },
             "protectedSettings": {
 
-              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File configure-music-app.ps1 -user ',parameters('adminUsername'),' -password ',parameters('adminPassword'))]"
+              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File Azure-New-Drive.ps1 -user ',parameters('adminUsername'),' -password ',parameters('adminPassword'))]"
 
 
 

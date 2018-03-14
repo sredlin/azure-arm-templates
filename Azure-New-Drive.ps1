@@ -1,3 +1,10 @@
+Param (
+    [string]$adminUsername,
+    [string]$adminPassword
+ 
+)
+
+
 
 $DriveName = "ADDS"
 $DriveLetter = "F"

@@ -55,6 +55,21 @@
       ],
       "defaultValue": "DC",
       "type": "string"
+    },
+
+    "_artifactsLocation": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/sredlin/azure-arm-templates/master/Azure-New-Drive.ps1",
+      "metadata": {
+        "description": "Auto-generated container in staging storage account to receive post-build staging folder upload"
+      }
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Auto-generated token to access _artifactsLocation"
+      }
     }
 
 
@@ -309,7 +324,7 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
               "fileUris": [
-                "[concat(variables('_artifactsLocation'), '/', variables('HDDScriptFolder'), '/', variables('HDDScriptFileName'), variables('_artifactsLocationSasToken'))]"
+                "[concat(parameters('_artifactsLocation'), '/', variables('HDDScriptFolder'), '/', variables('HDDScriptFileName'), parameters('_artifactsLocationSasToken'))]"
               ],
               "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('HDDScriptFolder'), '/', variables('HDDScriptFileName'))]"
             }
@@ -351,20 +366,7 @@
     "HDDScriptFileName": "Azure-New-Drive.ps1",
 
 
-    "_artifactsLocation": {
-      "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/sredlin/azure-arm-templates/master/Azure-New-Drive.ps1",
-      "metadata": {
-        "description": "Auto-generated container in staging storage account to receive post-build staging folder upload"
-      }
-    },
-    "_artifactsLocationSasToken": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Auto-generated token to access _artifactsLocation"
-      }
-    }
+
 
 
 

@@ -123,6 +123,11 @@
       "name": "[concat('Azure-VNet-',parameters('DeplyomentType'))]",
       "properties": {
 
+        "dnsSettings": {
+          "dnsServers": [ "8.8.8.8" ]
+
+        },
+
         "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ] },
 
         "subnets": [
@@ -170,9 +175,7 @@
       "location": "[resourceGroup().location]",
       "name": "[concat(parameters('vmName'),copyindex(1),'-NIC')]",
       "properties": {
-        "dnsSettings": {
-          "dnsServers": [ "8.8.8.8" ]
-        },
+     
         "networkSecurityGroup": {
           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'Allow-RDP')]"
         },

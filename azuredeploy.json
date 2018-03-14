@@ -156,7 +156,7 @@
       "name": "[concat(parameters('vmName'),copyindex(1),'-NIC')]",
       "properties": {
         "dnsSettings": {
-          "dnsServers": [ "10.0.0.5" ]
+          "dnsServers": [ "8.8.8.8" ]
         },
         "networkSecurityGroup": {
           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'Allow-RDP')]"

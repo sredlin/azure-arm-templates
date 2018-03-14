@@ -55,14 +55,6 @@
       ],
       "defaultValue": "DC",
       "type": "string"
-    },
-
-    "_artifactsLocation": {
-      "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/sredlin/azure-arm-templates/master/Azure-New-Drive.ps1",
-      "metadata": {
-        "description": "Auto-generated container in staging storage account to receive post-build staging folder upload"
-      }
     }
 
 
@@ -323,7 +315,7 @@
             "typeHandlerVersion": "1.4",
             "autoUpgradeMinorVersion": true,
             "settings": {
-              "fileUris": [ "parameters('_artifactsLocation')" ]
+              "fileUris": [ "https://raw.githubusercontent.com/sredlin/azure-arm-templates/master/Azure-New-Drive.ps1" ]
 
             },
             "protectedSettings": {

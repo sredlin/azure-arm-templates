@@ -55,6 +55,7 @@
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
+      "defaultValue": "",
       "metadata": {
         "description": "Auto-generated token to access _artifactsLocation"
       }

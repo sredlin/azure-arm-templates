@@ -192,7 +192,8 @@
             "properties": {
 
 
-              "privateIPAllocationMethod": "Dynamic",
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat('10.0.0.',copyindex(20))]",
 
               "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('vmName'),copyindex(1),'-PublicIPAddress'))]" },
 
@@ -369,7 +370,7 @@
     "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('DeplyomentType'), '-Subnet')]",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', concat('Azure-Vnet-',parameters('DeplyomentType')))]",
     "HDDScriptFolder": ".",
-    "HDDScriptFileName": "Azure-New-Drive.ps1",
+    "HDDScriptFileName": "Azure-New-Drive.ps1"
 
 
 

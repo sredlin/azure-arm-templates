@@ -242,11 +242,11 @@
           "osDisk": {
 
             "name": "[concat(parameters('vmName'),copyindex(1),'-OSDisk')]",
-
+           
             "caching": "ReadWrite",
 
             "createOption": "FromImage"
-
+             
           },
           "copy": [
 
@@ -283,23 +283,13 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmName'),copyindex(1),'-NIC'))]"
 
             }
-
           ]
-
-
         }
-
-
-
-
-
-
-
       },
       "type": "Microsoft.Compute/virtualMachines",
       "resources": [
         {
-          "name": "HDD",
+          "name": "Data-Drive",
           "type": "extensions",
           "location": "[resourceGroup().location]",
           "apiVersion": "2016-03-30",
@@ -307,7 +297,7 @@
             "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('vmName'),copyindex(1)))]"
           ],
           "tags": {
-            "displayName": "HDD"
+            "displayName": "Data-Drive"
           },
           "properties": {
             "publisher": "Microsoft.Compute",
@@ -316,14 +306,9 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
               "fileUris": [ "https://raw.githubusercontent.com/sredlin/azure-arm-templates/master/Azure-New-Drive.ps1" ]
-
-            },
+           },
             "protectedSettings": {
-
               "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File Azure-New-Drive.ps1 -user ',parameters('adminUsername'),' -password ',parameters('adminPassword'))]"
-
-
-
             }
           }
         }
@@ -353,22 +338,9 @@
       },
       "type": "Microsoft.Network/networkSecurityGroups"
     }
-
-
   ],
   "variables": {
     "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('DeplyomentType'), '-Subnet')]",
-    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', concat('Azure-Vnet-',parameters('DeplyomentType')))]",
-    "HDDScriptFolder": ".",
-    "HDDScriptFileName": "Azure-New-Drive.ps1"
-
-
-
-
-
-
-
-
-
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', concat('Azure-Vnet-',parameters('DeplyomentType')))]"
   }
 }

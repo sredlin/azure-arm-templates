@@ -23,8 +23,8 @@
     "numberOfInstances": {
       "type": "int",
       "defaultValue": 2,
-      "minValue": 2,
-      "maxValue": 5
+      "minValue": 2
+      
     },
 
 
@@ -56,9 +56,6 @@
       "defaultValue": "DC",
       "type": "string"
     }
-
-
-
   },
   "resources": [
 

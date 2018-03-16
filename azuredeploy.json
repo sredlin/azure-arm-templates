@@ -24,7 +24,7 @@
       "type": "int",
       "defaultValue": 2,
       "minValue": 2
-      
+
     },
 
 
@@ -55,7 +55,62 @@
       ],
       "defaultValue": "DC",
       "type": "string"
+    },
+
+    "vNetIP": {
+      "defaultValue": "10.0.0.0",
+      "type": "string"
+    },
+
+    "vNetMask": {
+      "type": "int",
+      "defaultValue": 16,
+      "allowedValues": [
+
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+
+      ]
+
+    },
+
+    "SubnetIP": {
+      "defaultValue": "10.0.0.0",
+      "type": "string"
+    },
+
+    "SubnetMask": {
+      "type": "int",
+      "defaultValue": 16,
+      "allowedValues": [
+
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ]
     }
+
+    
+
   },
   "resources": [
 
@@ -113,7 +168,7 @@
 
 
 
-        "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ] },
+        "addressSpace": { "addressPrefixes": [ "[concat(parameters('vNetIP'),'/',parameters('vNetMask'))]" ] },
 
         "subnets": [
 
@@ -122,7 +177,7 @@
             "name": "[concat(parameters('DeplyomentType'), '-Subnet')]",
 
             "properties": {
-              "addressPrefix": "10.0.0.0/24"
+              "addressPrefix": "[concat(parameters('SubnetIP'),'/',parameters('SubnetMask'))]"
 
             }
 
@@ -175,7 +230,7 @@
 
 
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat('10.0.0.',copyindex(20))]",
+              "privateIPAddress": "[concat(parameters('SubnetIP'),copyindex(20))]",
 
               "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('vmName'),copyindex(1),'-PublicIPAddress'))]" },
 

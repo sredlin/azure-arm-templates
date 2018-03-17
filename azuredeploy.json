@@ -15,6 +15,7 @@
       "defaultValue": "2016-Datacenter",
       "allowedValues": [
 
+
         "2012-R2-Datacenter",
         "2016-Datacenter"
       ]
@@ -230,7 +231,8 @@
 
 
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('SubnetIP'),copyindex(20))]",
+              "privateIPAddress": "[concat(string(div(variables('ipAddress32Bit'),16777216)), '.', string(div(mod(variables('ipAddress32Bit'),16777216),65536)), '.', string(div(mod(variables('ipAddress32Bit'),65536),256)), '.', copyIndex(20))]",
+
 
               "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('vmName'),copyindex(1),'-PublicIPAddress'))]" },
 
@@ -393,6 +395,10 @@
   ],
   "variables": {
     "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('DeplyomentType'), '-Subnet')]",
-    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', concat('Azure-Vnet-',parameters('DeplyomentType')))]"
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', concat('Azure-Vnet-',parameters('DeplyomentType')))]",
+
+
+    "ipAddress32Bit": "[add(add(add(mul(int(split(parameters('SubnetIP'),'.')[0]),16777216),mul(int(split(parameters('SubnetIP'),'.')[1]),65536)),mul(int(split(parameters('SubnetIP'),'.')[2]),256)),int(split(parameters('SubnetIP'),'.')[3]))]"
+            
   }
 }

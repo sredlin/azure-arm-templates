@@ -21,8 +21,7 @@
       ]
     },
 
-    "numberOfInstances": {
-      "type": "int",
+    "numberOfInstances": {      "type": "int",
       "defaultValue": 2,
       "minValue": 2
 
@@ -86,13 +85,13 @@
     },
 
     "SubnetIP": {
-      "defaultValue": "10.0.0.0",
+      "defaultValue": "10.0.1.0",
       "type": "string"
     },
 
     "SubnetMask": {
       "type": "int",
-      "defaultValue": 16,
+      "defaultValue": 24,
       "allowedValues": [
 
         16,
@@ -362,7 +361,7 @@
               "fileUris": [ "https://raw.githubusercontent.com/sredlin/azure-arm-templates/master/Azure-New-Drive.ps1" ]
            },
             "protectedSettings": {
-              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File Azure-New-Drive.ps1 -user ',parameters('adminUsername'),' -password ',parameters('adminPassword'))]"
+              "commandToE                   xecute": "[concat('powershell -ExecutionPolicy Unrestricted -File Azure-New-Drive.ps1 -user ',parameters('adminUsername'),' -password ',parameters('adminPassword'))]"
             }
           }
         }

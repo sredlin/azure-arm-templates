@@ -23,7 +23,7 @@
 
     "numberOfInstances": {      "type": "int",
       "defaultValue": 2,
-      "minValue": 2
+      "minValue": 1
 
     },
 
